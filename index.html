@@ -130,6 +130,14 @@ body { font-family: var(--sans); background: var(--bg); color: var(--text); min-
 .assignee-input:focus { outline: none; border-color: var(--blue); background: var(--surface); }
 .assignee-input::placeholder { color: var(--text3); }
 
+.date-input {
+  font-size: 12px; color: var(--text); background: transparent;
+  border: 1px solid transparent; border-radius: var(--radius);
+  padding: 3px 6px; width: 100%; font-family: var(--sans); max-width: 132px;
+}
+.date-input:hover { border-color: var(--border2); background: var(--surface2); }
+.date-input:focus { outline: none; border-color: var(--blue); background: var(--surface); }
+
 .updated-tag { font-size: 10px; color: var(--text3); white-space: nowrap; }
 
 /* ── MODAL OVERLAY ── */
@@ -313,11 +321,11 @@ body { font-family: var(--sans); background: var(--bg); color: var(--text); min-
 const STORAGE_KEY = 'bugboard_v2';
 
 const seed = [
-  { id:'US-01', project:'US', title:'Totals are incorrect', priority:'high', status:'open', area:'Calculation', assignee:'', notes:'', updated:'' },
-  { id:'US-02', project:'US', title:'Simulate on one tactic is triggering on the other in shared investments', priority:'critical', status:'open', area:'Shared investments', assignee:'', notes:'', updated:'' },
-  { id:'US-03', project:'US', title:'One portfolio shows two different sessions — direct & shared investments in one, only shared investments in another', priority:'high', status:'open', area:'Portfolio / Session', assignee:'', notes:'', updated:'' },
-  { id:'US-04', project:'US', title:'Influencer tactic partially showing in non-spends even though spends and RCs are built', priority:'medium', status:'open', area:'Media Tactic / RC', assignee:'', notes:'', updated:'' },
-  { id:'BR-01', project:'Brazil', title:'Optimization not running — getting scale 0 error; root cause still under investigation', priority:'critical', status:'investigating', area:'Optimization', assignee:'', notes:'', updated:'' },
+  { id:'US-01', project:'US', title:'Totals are incorrect', priority:'high', status:'open', area:'Calculation', assignee:'', notes:'', raised:'', fixed:'', updated:'' },
+  { id:'US-02', project:'US', title:'Simulate on one tactic is triggering on the other in shared investments', priority:'critical', status:'open', area:'Shared investments', assignee:'', notes:'', raised:'', fixed:'', updated:'' },
+  { id:'US-03', project:'US', title:'One portfolio shows two different sessions — direct & shared investments in one, only shared investments in another', priority:'high', status:'open', area:'Portfolio / Session', assignee:'', notes:'', raised:'', fixed:'', updated:'' },
+  { id:'US-04', project:'US', title:'Influencer tactic partially showing in non-spends even though spends and RCs are built', priority:'medium', status:'open', area:'Media Tactic / RC', assignee:'', notes:'', raised:'', fixed:'', updated:'' },
+  { id:'BR-01', project:'Brazil', title:'Optimization not running — getting scale 0 error; root cause still under investigation', priority:'critical', status:'investigating', area:'Optimization', assignee:'', notes:'', raised:'', fixed:'', updated:'' },
 ];
 
 const priorityOrder = { critical:0, high:1, medium:2, low:3 };
@@ -328,11 +336,17 @@ let currentFilter = 'all';
 let currentSort = 'default';
 
 /* ── PERSISTENCE ── */
+function normalizeBug(b) {
+  const x = { ...b };
+  if (x.raised === undefined || x.raised === null) x.raised = '';
+  if (x.fixed === undefined || x.fixed === null) x.fixed = '';
+  return x;
+}
 function load() {
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
-    bugs = raw ? JSON.parse(raw) : seed.map(b => ({ ...b }));
-  } catch(e) { bugs = seed.map(b => ({ ...b })); }
+    bugs = raw ? JSON.parse(raw).map(normalizeBug) : seed.map(b => normalizeBug(b));
+  } catch(e) { bugs = seed.map(b => normalizeBug(b)); }
 }
 function persist() {
   try { localStorage.setItem(STORAGE_KEY, JSON.stringify(bugs)); } catch(e) {}
@@ -377,14 +391,20 @@ function setFilter(f, btn) {
 function setSort(v) { currentSort = v; render(); }
 
 /* ── INLINE EDITS ── */
+function todayISO() {
+  return new Date().toISOString().slice(0, 10);
+}
 function changeStatus(sel) {
   const bug = bugs.find(b => b.id === sel.dataset.id);
   if (!bug) return;
   bug.status = sel.value;
+  if (sel.value === 'resolved' && !bug.fixed) bug.fixed = todayISO();
   bug.updated = new Date().toLocaleTimeString([], { hour:'2-digit', minute:'2-digit' });
   sel.className = 'status-select s-' + sel.value;
   const el = document.getElementById('upd-' + bug.id);
   if (el) el.textContent = 'Updated ' + bug.updated;
+  const fixedInput = document.querySelector(`input.date-input[data-id="${bug.id}"][data-field="fixed"]`);
+  if (fixedInput) fixedInput.value = bug.fixed || '';
   persist(); updateStats();
 }
 function changeNotes(el) {
@@ -394,6 +414,14 @@ function changeNotes(el) {
 function changeAssignee(el) {
   const bug = bugs.find(b => b.id === el.dataset.id);
   if (bug) { bug.assignee = el.value; persist(); }
+}
+function changeDate(el) {
+  const bug = bugs.find(b => b.id === el.dataset.id);
+  if (!bug) return;
+  const field = el.dataset.field;
+  if (field !== 'raised' && field !== 'fixed') return;
+  bug[field] = el.value || '';
+  persist();
 }
 function deleteBug(id) {
   if (!confirm('Delete this issue?')) return;
@@ -443,6 +471,8 @@ function submitIssue() {
     status:   document.getElementById('f-status').value,
     assignee: document.getElementById('f-assignee').value.trim(),
     notes:    document.getElementById('f-notes').value.trim(),
+    raised:   todayISO(),
+    fixed:    document.getElementById('f-status').value === 'resolved' ? todayISO() : '',
     updated:  '',
   };
 
@@ -492,6 +522,8 @@ function render() {
           <th style="width:95px">Area</th>
           <th style="width:78px">Priority</th>
           <th style="width:132px">Status</th>
+          <th style="width:118px">Raised</th>
+          <th style="width:118px">Fixed</th>
           <th style="width:108px">Assignee</th>
           <th style="width:150px">Notes</th>
           <th style="width:88px">Updated</th>
@@ -506,6 +538,8 @@ function render() {
         <td class="td-area">${b.area}</td>
         <td><span class="pri pri-${b.priority}">${b.priority}</span></td>
         <td><select class="status-select s-${b.status}" data-id="${b.id}" onchange="changeStatus(this)">${opts}</select></td>
+        <td><input class="date-input" type="date" data-id="${b.id}" data-field="raised" value="${b.raised || ''}" onchange="changeDate(this)"/></td>
+        <td><input class="date-input" type="date" data-id="${b.id}" data-field="fixed" value="${b.fixed || ''}" onchange="changeDate(this)"/></td>
         <td><input class="assignee-input" type="text" data-id="${b.id}" value="${b.assignee}" placeholder="Unassigned" onchange="changeAssignee(this)"/></td>
         <td><textarea class="notes-input" data-id="${b.id}" rows="1" placeholder="Add a note…" onchange="changeNotes(this)">${b.notes}</textarea></td>
         <td><span class="updated-tag" id="upd-${b.id}">${b.updated?'Updated '+b.updated:'—'}</span></td>
