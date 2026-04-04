@@ -3,314 +3,124 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Bug Tracker — US & Brazil</title>
-<style>
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-:root {
-  --bg: #f4f5f7; --surface: #ffffff; --surface2: #f0f1f3;
-  --border: rgba(0,0,0,0.1); --border2: rgba(0,0,0,0.18);
-  --text: #172b4d; --text2: #5e6c84; --text3: #97a0af;
-  --blue: #0052cc; --blue-bg: #deebff;
-  --purple-bg: #eae6ff; --purple: #403294;
-  --radius: 4px; --radius-lg: 8px;
-  --mono: ui-monospace, monospace;
-  --sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --bg: #1d2125; --surface: #22272b; --surface2: #282e33;
-    --border: rgba(255,255,255,0.08); --border2: rgba(255,255,255,0.16);
-    --text: #c7d1db; --text2: #8c9bab; --text3: #596773;
-    --blue: #4c9aff; --blue-bg: #0c2340; --purple-bg: #1e1a40; --purple: #998dd9;
-  }
-}
-
-body { font-family: var(--sans); background: var(--bg); color: var(--text); min-height: 100vh; }
-
-/* NAV */
-.topnav { background: #0052cc; padding: 0 20px; height: 48px; display: flex; align-items: center; }
-.topnav-logo { color: #fff; font-size: 15px; font-weight: 600; display: flex; align-items: center; gap: 8px; }
-.topnav-logo svg { width: 24px; height: 24px; }
-.topnav-right { margin-left: auto; }
-.avatar { width: 28px; height: 28px; border-radius: 50%; background: #4c9aff; color: #fff; font-size: 11px; font-weight: 600; display: flex; align-items: center; justify-content: center; }
-
-.breadcrumb { padding: 12px 24px 0; font-size: 12px; color: var(--text2); display: flex; align-items: center; gap: 6px; }
-.breadcrumb span { color: var(--text3); }
-
-.page-header { padding: 12px 24px 16px; display: flex; align-items: center; gap: 12px; border-bottom: 1px solid var(--border); }
-.page-icon { width: 32px; height: 32px; background: #0052cc; border-radius: var(--radius); display: flex; align-items: center; justify-content: center; }
-.page-header h1 { font-size: 20px; font-weight: 600; }
-.header-right { margin-left: auto; display: flex; align-items: center; gap: 12px; font-size: 12px; color: var(--text2); }
-
-/* CREATE BUTTON */
-.btn-create {
-  background: #0052cc; color: #fff; border: none;
-  font-size: 13px; font-weight: 500; padding: 7px 14px;
-  border-radius: var(--radius); cursor: pointer; font-family: var(--sans);
-  display: flex; align-items: center; gap: 6px; transition: background 0.15s;
-}
-.btn-create:hover { background: #0747a6; }
-.btn-create svg { width: 14px; height: 14px; }
-
-/* STATS */
-.stats-row { display: flex; gap: 12px; padding: 16px 24px; flex-wrap: wrap; }
-.stat-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 12px 16px; min-width: 90px; border-top: 3px solid transparent; }
-.stat-card.total { border-top-color: #0052cc; }
-.stat-card.s-open { border-top-color: #36b37e; }
-.stat-card.s-progress { border-top-color: #0052cc; }
-.stat-card.s-resolved { border-top-color: #6554c0; }
-.stat-card.s-blocked { border-top-color: #de350b; }
-.stat-num { font-size: 24px; font-weight: 700; color: var(--text); }
-.stat-label { font-size: 11px; color: var(--text2); margin-top: 2px; text-transform: uppercase; letter-spacing: 0.05em; }
-
-/* TOOLBAR */
-.toolbar { padding: 0 24px 12px; display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
-.filter-btn { font-size: 13px; padding: 5px 12px; border-radius: var(--radius); border: 1px solid var(--border2); background: var(--surface); color: var(--text2); cursor: pointer; transition: all 0.1s; font-family: var(--sans); }
-.filter-btn:hover { background: var(--surface2); color: var(--text); }
-.filter-btn.active { background: var(--blue-bg); color: var(--blue); border-color: var(--blue); font-weight: 500; }
-.toolbar-right { margin-left: auto; }
-.toolbar select { font-size: 12px; padding: 5px 8px; border-radius: var(--radius); border: 1px solid var(--border2); background: var(--surface); color: var(--text2); font-family: var(--sans); cursor: pointer; }
-
-/* TABLE */
-.issue-table-wrap { padding: 0 24px 40px; }
-.proj-section { margin-bottom: 24px; }
-.proj-header { display: flex; align-items: center; gap: 8px; padding: 8px 0; border-bottom: 2px solid var(--border2); }
-.proj-badge { font-size: 11px; font-weight: 700; padding: 3px 8px; border-radius: 3px; letter-spacing: 0.04em; text-transform: uppercase; }
-.badge-us { background: var(--blue-bg); color: var(--blue); }
-.badge-br { background: var(--purple-bg); color: var(--purple); }
-.proj-label { font-size: 13px; font-weight: 600; }
-.proj-count { font-size: 12px; color: var(--text3); margin-left: auto; }
-
-.issue-table { width: 100%; border-collapse: collapse; background: var(--surface); border: 1px solid var(--border); border-top: none; }
-.issue-table thead tr { background: var(--surface2); border-bottom: 1px solid var(--border2); }
-.issue-table th { font-size: 11px; font-weight: 600; color: var(--text2); text-transform: uppercase; letter-spacing: 0.05em; padding: 8px 12px; text-align: left; white-space: nowrap; }
-.issue-table tbody tr { border-bottom: 1px solid var(--border); transition: background 0.1s; }
-.issue-table tbody tr:last-child { border-bottom: none; }
-.issue-table tbody tr:hover { background: var(--surface2); }
-.issue-table td { padding: 10px 12px; font-size: 13px; vertical-align: middle; }
-
-.td-id { font-family: var(--mono); font-size: 11px; color: var(--blue); white-space: nowrap; font-weight: 600; }
-.td-title { line-height: 1.5; color: var(--text); }
-.td-area { font-size: 11px; color: var(--text2); white-space: nowrap; }
-
-/* DELETE BUTTON */
-.btn-del { background: none; border: none; cursor: pointer; padding: 4px 6px; border-radius: var(--radius); color: var(--text3); font-size: 14px; line-height: 1; transition: all 0.1s; }
-.btn-del:hover { background: #ffebe6; color: #de350b; }
-
-.pri { display: inline-flex; align-items: center; font-size: 11px; font-weight: 600; padding: 2px 7px; border-radius: 3px; }
-.pri-critical { background: #ffebe6; color: #de350b; }
-.pri-high     { background: #fff4e5; color: #b25000; }
-.pri-medium   { background: #e6f0ff; color: #0052cc; }
-.pri-low      { background: #e3fcef; color: #006644; }
-
-.status-select {
-  font-size: 11px; font-weight: 700; padding: 3px 22px 3px 8px;
-  border-radius: 3px; border: none; cursor: pointer; font-family: var(--sans);
-  appearance: none; -webkit-appearance: none;
-  text-transform: uppercase; letter-spacing: 0.04em; outline: none;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%23888'/%3E%3C/svg%3E");
-  background-repeat: no-repeat; background-position: right 6px center;
-}
-.status-select:hover { opacity: 0.8; }
-.s-open          { background-color: #e3fcef; color: #006644; }
-.s-in-progress   { background-color: #deebff; color: #0052cc; }
-.s-investigating { background-color: #fff4e5; color: #b25000; }
-.s-resolved      { background-color: #eae6ff; color: #403294; }
-.s-blocked       { background-color: #ffebe6; color: #de350b; }
-
-.notes-input { font-size: 12px; color: var(--text2); background: transparent; border: 1px solid transparent; border-radius: var(--radius); padding: 3px 6px; width: 100%; font-family: var(--sans); resize: none; line-height: 1.4; min-height: 28px; }
-.notes-input:hover { border-color: var(--border2); background: var(--surface2); }
-.notes-input:focus { outline: none; border-color: var(--blue); background: var(--surface); }
-.notes-input::placeholder { color: var(--text3); font-style: italic; }
-
-.assignee-input { font-size: 12px; color: var(--text); background: transparent; border: 1px solid transparent; border-radius: var(--radius); padding: 3px 6px; width: 100%; font-family: var(--sans); }
-.assignee-input:hover { border-color: var(--border2); background: var(--surface2); }
-.assignee-input:focus { outline: none; border-color: var(--blue); background: var(--surface); }
-.assignee-input::placeholder { color: var(--text3); }
-
-.date-input {
-  font-size: 12px; color: var(--text); background: transparent;
-  border: 1px solid transparent; border-radius: var(--radius);
-  padding: 3px 6px; width: 100%; font-family: var(--sans); max-width: 132px;
-}
-.date-input:hover { border-color: var(--border2); background: var(--surface2); }
-.date-input:focus { outline: none; border-color: var(--blue); background: var(--surface); }
-
-.updated-tag { font-size: 10px; color: var(--text3); white-space: nowrap; }
-
-/* ── MODAL OVERLAY ── */
-.modal-overlay {
-  display: none; position: fixed; inset: 0;
-  background: rgba(9,30,66,0.54);
-  z-index: 100; align-items: center; justify-content: center;
-}
-.modal-overlay.open { display: flex; }
-
-.modal {
-  background: var(--surface); border-radius: var(--radius-lg);
-  width: 520px; max-width: calc(100vw - 32px);
-  box-shadow: 0 8px 32px rgba(0,0,0,0.24);
-  overflow: hidden;
-}
-.modal-header {
-  padding: 16px 20px; border-bottom: 1px solid var(--border);
-  display: flex; align-items: center; justify-content: space-between;
-}
-.modal-header h2 { font-size: 16px; font-weight: 600; color: var(--text); }
-.modal-close { background: none; border: none; cursor: pointer; font-size: 20px; color: var(--text3); line-height: 1; padding: 2px 6px; border-radius: var(--radius); }
-.modal-close:hover { background: var(--surface2); color: var(--text); }
-
-.modal-body { padding: 20px; display: flex; flex-direction: column; gap: 14px; }
-
-.form-row { display: flex; gap: 12px; }
-.form-group { display: flex; flex-direction: column; gap: 5px; flex: 1; }
-.form-group label { font-size: 12px; font-weight: 600; color: var(--text2); text-transform: uppercase; letter-spacing: 0.04em; }
-
-.form-input, .form-select, .form-textarea {
-  font-size: 13px; color: var(--text); background: var(--surface);
-  border: 1px solid var(--border2); border-radius: var(--radius);
-  padding: 7px 10px; font-family: var(--sans); width: 100%;
-  transition: border-color 0.15s;
-}
-.form-input:focus, .form-select:focus, .form-textarea:focus {
-  outline: none; border-color: var(--blue);
-  box-shadow: 0 0 0 2px rgba(0,82,204,0.2);
-}
-.form-textarea { resize: vertical; min-height: 72px; line-height: 1.5; }
-.form-select { cursor: pointer; appearance: none; -webkit-appearance: none;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%23888'/%3E%3C/svg%3E");
-  background-repeat: no-repeat; background-position: right 10px center; padding-right: 28px;
-}
-.form-error { font-size: 11px; color: #de350b; display: none; }
-.form-error.show { display: block; }
-
-.modal-footer { padding: 14px 20px; border-top: 1px solid var(--border); display: flex; justify-content: flex-end; gap: 8px; }
-.btn-cancel { background: var(--surface); color: var(--text2); border: 1px solid var(--border2); font-size: 13px; padding: 7px 14px; border-radius: var(--radius); cursor: pointer; font-family: var(--sans); }
-.btn-cancel:hover { background: var(--surface2); }
-.btn-submit { background: #0052cc; color: #fff; border: none; font-size: 13px; font-weight: 500; padding: 7px 16px; border-radius: var(--radius); cursor: pointer; font-family: var(--sans); transition: background 0.15s; }
-.btn-submit:hover { background: #0747a6; }
-
-/* TOAST */
-.toast { position: fixed; bottom: 24px; right: 24px; background: #172b4d; color: #fff; padding: 10px 18px; border-radius: var(--radius-lg); font-size: 13px; opacity: 0; pointer-events: none; transition: opacity 0.2s; z-index: 999; }
-.toast.show { opacity: 1; }
-</style>
+<title>Project plan — Global Simulator Platform</title>
+<link rel="stylesheet" href="css/app.css" />
 </head>
 <body>
 
 <div class="topnav">
-  <div class="topnav-logo">
-    <svg viewBox="0 0 24 24" fill="none">
+  <a class="topnav-logo" href="index.html">
+    <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
       <rect x="3" y="3" width="8" height="8" rx="1.5" fill="white" opacity="0.9"/>
       <rect x="13" y="3" width="8" height="8" rx="1.5" fill="white" opacity="0.6"/>
       <rect x="3" y="13" width="8" height="8" rx="1.5" fill="white" opacity="0.6"/>
       <rect x="13" y="13" width="8" height="8" rx="1.5" fill="white" opacity="0.3"/>
     </svg>
-    BugBoard
-  </div>
+    Global Simulator Platform
+  </a>
+  <nav class="topnav-links" aria-label="Main">
+    <a href="index.html" class="nav-link active">Plan</a>
+    <a href="resources.html" class="nav-link">Resources</a>
+    <a href="bugs.html" class="nav-link">Bugs</a>
+  </nav>
   <div class="topnav-right"><div class="avatar">AR</div></div>
 </div>
 
-<div class="breadcrumb">Projects <span>›</span> MMM Platform <span>›</span> Prod Bugs</div>
+<div class="breadcrumb">Global Simulator Platform <span>›</span> Project plan</div>
 
 <div class="page-header">
   <div class="page-icon">
-    <svg viewBox="0 0 24 24" fill="white" width="18" height="18"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/></svg>
+    <svg viewBox="0 0 24 24" fill="white" width="18" height="18" aria-hidden="true"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/></svg>
   </div>
-  <h1>Prod bug tracker</h1>
+  <h1>Project plan</h1>
   <div class="header-right">
     <span>Last saved: <span id="last-saved">—</span></span>
-    <button class="btn-create" onclick="openModal()">
-      <svg viewBox="0 0 14 14" fill="none"><path d="M7 1v12M1 7h12" stroke="white" stroke-width="2" stroke-linecap="round"/></svg>
-      Create issue
+    <button type="button" class="btn-create" onclick="openModal()">
+      <svg viewBox="0 0 14 14" fill="none" aria-hidden="true"><path d="M7 1v12M1 7h12" stroke="white" stroke-width="2" stroke-linecap="round"/></svg>
+      Add milestone
     </button>
   </div>
 </div>
 
 <div class="stats-row">
   <div class="stat-card total"><div class="stat-num" id="st-total">—</div><div class="stat-label">Total</div></div>
-  <div class="stat-card s-open"><div class="stat-num" id="st-open" style="color:#36b37e;">—</div><div class="stat-label">Open</div></div>
-  <div class="stat-card s-progress"><div class="stat-num" id="st-prog" style="color:#0052cc;">—</div><div class="stat-label">In progress</div></div>
-  <div class="stat-card s-resolved"><div class="stat-num" id="st-res" style="color:#6554c0;">—</div><div class="stat-label">Resolved</div></div>
-  <div class="stat-card s-blocked"><div class="stat-num" id="st-blk" style="color:#de350b;">—</div><div class="stat-label">Blocked</div></div>
+  <div class="stat-card plan-ns"><div class="stat-num" id="st-ns">—</div><div class="stat-label">Not started</div></div>
+  <div class="stat-card plan-ip"><div class="stat-num" id="st-ip">—</div><div class="stat-label">In progress</div></div>
+  <div class="stat-card plan-done"><div class="stat-num" id="st-done">—</div><div class="stat-label">Done</div></div>
+  <div class="stat-card plan-risk"><div class="stat-num" id="st-risk">—</div><div class="stat-label">At risk</div></div>
 </div>
 
 <div class="toolbar">
-  <button class="filter-btn active" onclick="setFilter('all',this)">All issues</button>
-  <button class="filter-btn" onclick="setFilter('US',this)">US project</button>
-  <button class="filter-btn" onclick="setFilter('Brazil',this)">Brazil project</button>
+  <button type="button" class="filter-btn active" onclick="setFilter('all',this)">All</button>
+  <button type="button" class="filter-btn" onclick="setFilter('not-started',this)">Not started</button>
+  <button type="button" class="filter-btn" onclick="setFilter('in-progress',this)">In progress</button>
+  <button type="button" class="filter-btn" onclick="setFilter('done',this)">Done</button>
+  <button type="button" class="filter-btn" onclick="setFilter('at-risk',this)">At risk</button>
   <div class="toolbar-right">
-    <select onchange="setSort(this.value)">
-      <option value="default">Sort: default</option>
-      <option value="priority">Sort: priority</option>
+    <select onchange="setSort(this.value)" aria-label="Sort">
+      <option value="default">Sort: priority (1 = highest)</option>
       <option value="status">Sort: status</option>
+      <option value="target">Sort: target date</option>
     </select>
   </div>
 </div>
 
-<div class="issue-table-wrap" id="issue-container"></div>
+<section class="week-plan-section" aria-label="Week plan">
+  <div class="week-plan-toolbar">
+    <h2 class="week-plan-title">Week plan</h2>
+    <span class="week-plan-hint">Click a cell to cycle: empty → Planned → Active. Use Save to store this grid in the browser.</span>
+    <span id="week-plan-dirty" class="week-plan-dirty" style="display:none">Unsaved</span>
+    <button type="button" class="week-plan-save" id="week-plan-save" onclick="saveWeekPlan()" disabled>Save week plan</button>
+  </div>
+  <div id="week-plan-container"></div>
+</section>
 
-<!-- CREATE ISSUE MODAL -->
+<div class="issue-table-wrap" id="plan-container"></div>
+
 <div class="modal-overlay" id="modal-overlay" onclick="overlayClick(event)">
   <div class="modal">
     <div class="modal-header">
-      <h2>Create issue</h2>
-      <button class="modal-close" onclick="closeModal()">&#x2715;</button>
+      <h2>Add milestone</h2>
+      <button type="button" class="modal-close" onclick="closeModal()">&#x2715;</button>
     </div>
     <div class="modal-body">
-      <div class="form-group">
-        <label>Title *</label>
-        <input class="form-input" id="f-title" type="text" placeholder="Short description of the bug" />
-        <span class="form-error" id="err-title">Title is required</span>
-      </div>
       <div class="form-row">
         <div class="form-group">
-          <label>Project *</label>
-          <select class="form-select" id="f-project">
-            <option value="">Select project</option>
-            <option value="US">US Project</option>
-            <option value="Brazil">Brazil Project</option>
-          </select>
-          <span class="form-error" id="err-project">Select a project</span>
+          <label for="f-phase">Phase / workstream *</label>
+          <input class="form-input" id="f-phase" type="text" placeholder="e.g. Core engine" />
+          <span class="form-error" id="err-phase">Required</span>
         </div>
         <div class="form-group">
-          <label>Area</label>
-          <input class="form-input" id="f-area" type="text" placeholder="e.g. Calculation, RC, Optimization" />
-        </div>
-      </div>
-      <div class="form-row">
-        <div class="form-group">
-          <label>Priority</label>
-          <select class="form-select" id="f-priority">
-            <option value="critical">Critical</option>
-            <option value="high">High</option>
-            <option value="medium" selected>Medium</option>
-            <option value="low">Low</option>
-          </select>
-        </div>
-        <div class="form-group">
-          <label>Status</label>
-          <select class="form-select" id="f-status">
-            <option value="open" selected>Open</option>
-            <option value="in-progress">In Progress</option>
-            <option value="investigating">Investigating</option>
-            <option value="blocked">Blocked</option>
-          </select>
+          <label for="f-priority">Priority</label>
+          <input class="form-input" id="f-priority" type="number" min="1" step="1" placeholder="1 = highest" />
         </div>
       </div>
       <div class="form-group">
-        <label>Assignee</label>
-        <input class="form-input" id="f-assignee" type="text" placeholder="Developer name" />
+        <label for="f-target">Target date</label>
+        <input class="form-input" id="f-target" type="date" />
       </div>
       <div class="form-group">
-        <label>Notes</label>
-        <textarea class="form-textarea" id="f-notes" placeholder="Additional context, steps to reproduce, etc."></textarea>
+        <label for="f-milestone">Milestone *</label>
+        <input class="form-input" id="f-milestone" type="text" placeholder="What will be delivered" />
+        <span class="form-error" id="err-milestone">Required</span>
+      </div>
+      <div class="form-group">
+        <label for="f-status">Status</label>
+        <select class="form-select" id="f-status">
+          <option value="not-started">Not started</option>
+          <option value="in-progress" selected>In progress</option>
+          <option value="done">Done</option>
+          <option value="at-risk">At risk</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label for="f-notes">Notes</label>
+        <textarea class="form-textarea" id="f-notes" placeholder="Dependencies, owners, links…"></textarea>
       </div>
     </div>
     <div class="modal-footer">
-      <button class="btn-cancel" onclick="closeModal()">Cancel</button>
-      <button class="btn-submit" onclick="submitIssue()">Create issue</button>
+      <button type="button" class="btn-cancel" onclick="closeModal()">Cancel</button>
+      <button type="button" class="btn-submit" onclick="submitRow()">Save</button>
     </div>
   </div>
 </div>
@@ -318,40 +128,169 @@ body { font-family: var(--sans); background: var(--bg); color: var(--text); min-
 <div class="toast" id="toast">Changes saved</div>
 
 <script>
-const STORAGE_KEY = 'bugboard_v2';
+const STORAGE_KEY = 'gs_plan_v2';
+const WEEK_PLAN_KEY = 'gs_week_plan_v1';
 
-const seed = [
-  { id:'US-01', project:'US', title:'Totals are incorrect', priority:'high', status:'open', area:'Calculation', assignee:'', notes:'', raised:'', fixed:'', updated:'' },
-  { id:'US-02', project:'US', title:'Simulate on one tactic is triggering on the other in shared investments', priority:'critical', status:'open', area:'Shared investments', assignee:'', notes:'', raised:'', fixed:'', updated:'' },
-  { id:'US-03', project:'US', title:'One portfolio shows two different sessions — direct & shared investments in one, only shared investments in another', priority:'high', status:'open', area:'Portfolio / Session', assignee:'', notes:'', raised:'', fixed:'', updated:'' },
-  { id:'US-04', project:'US', title:'Influencer tactic partially showing in non-spends even though spends and RCs are built', priority:'medium', status:'open', area:'Media Tactic / RC', assignee:'', notes:'', raised:'', fixed:'', updated:'' },
-  { id:'BR-01', project:'Brazil', title:'Optimization not running — getting scale 0 error; root cause still under investigation', priority:'critical', status:'investigating', area:'Optimization', assignee:'', notes:'', raised:'', fixed:'', updated:'' },
+const WEEK_COLS = [
+  { id: 'wk12apr', label: 'WK 1-2 APR' },
+  { id: 'wk34apr', label: 'WK 3-4 APR' },
+  { id: 'wk12may', label: 'WK 1-2 MAY' },
+  { id: 'wk34may', label: 'WK 3-4 MAY+' },
 ];
 
-const priorityOrder = { critical:0, high:1, medium:2, low:3 };
-const statusOrder   = { blocked:0, investigating:1, 'in-progress':2, open:3, resolved:4 };
+const planStatusOrder = { 'at-risk': 0, 'not-started': 1, 'in-progress': 2, done: 3 };
 
-let bugs = [];
+const seed = [
+  { id: 'P-01', phase: 'Platform', milestone: 'Simulation design', targetDate: '', status: 'not-started', priority: 1, notes: '', updated: '' },
+  { id: 'P-02', phase: 'Platform', milestone: 'Compare sessions', targetDate: '', status: 'not-started', priority: 2, notes: '', updated: '' },
+];
+
+let rows = [];
 let currentFilter = 'all';
 let currentSort = 'default';
 
-/* ── PERSISTENCE ── */
-function normalizeBug(b) {
-  const x = { ...b };
-  if (x.raised === undefined || x.raised === null) x.raised = '';
-  if (x.fixed === undefined || x.fixed === null) x.fixed = '';
+let weekPlanState = {};
+let weekPlanDirty = false;
+
+function esc(s) {
+  return String(s ?? '')
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/"/g, '&quot;');
+}
+
+function priorityValue(r) {
+  const p = parseInt(r && r.priority, 10);
+  return Number.isFinite(p) && p >= 1 ? p : 999;
+}
+
+function normalizeRow(r) {
+  const x = { ...r };
+  if (x.phase === undefined || x.phase === null) x.phase = '';
+  if (x.milestone === undefined || x.milestone === null) x.milestone = '';
+  if (x.targetDate === undefined || x.targetDate === null) x.targetDate = '';
+  if (!['not-started', 'in-progress', 'done', 'at-risk'].includes(x.status)) x.status = 'not-started';
+  if (x.notes === undefined || x.notes === null) x.notes = '';
+  if (x.updated === undefined || x.updated === null) x.updated = '';
+  if (x.priority === undefined || x.priority === null || x.priority === '') x.priority = 999;
+  else {
+    const p = parseInt(x.priority, 10);
+    x.priority = Number.isFinite(p) && p >= 1 ? p : 999;
+  }
+  if (!x.id) x.id = nextId();
   return x;
 }
+
+function sortByPriorityThenId(a, b) {
+  const d = priorityValue(a) - priorityValue(b);
+  if (d !== 0) return d;
+  return String(a.id).localeCompare(String(b.id));
+}
+
+function nextPrioritySlot() {
+  const nums = rows.map(r => priorityValue(r)).filter(function (n) { return n < 999; });
+  const max = nums.length ? Math.max.apply(null, nums) : 0;
+  return max + 1;
+}
+
 function load() {
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
-    bugs = raw ? JSON.parse(raw).map(normalizeBug) : seed.map(b => normalizeBug(b));
-  } catch(e) { bugs = seed.map(b => normalizeBug(b)); }
+    rows = raw ? JSON.parse(raw).map(normalizeRow) : seed.map(normalizeRow);
+  } catch (e) {
+    rows = seed.map(normalizeRow);
+  }
 }
+
+function loadWeekPlan() {
+  try {
+    const raw = localStorage.getItem(WEEK_PLAN_KEY);
+    weekPlanState = raw ? JSON.parse(raw) : {};
+    if (weekPlanState && typeof weekPlanState !== 'object') weekPlanState = {};
+  } catch (e) {
+    weekPlanState = {};
+  }
+  weekPlanDirty = false;
+}
+
+function pruneWeekPlanKeys() {
+  const ids = new Set(rows.map(function (r) { return r.id; }));
+  Object.keys(weekPlanState).forEach(function (k) {
+    if (!ids.has(k)) delete weekPlanState[k];
+  });
+}
+
+function ensureWeekPlanRow(milestoneId) {
+  if (!weekPlanState[milestoneId]) weekPlanState[milestoneId] = {};
+  WEEK_COLS.forEach(function (c) {
+    const v = weekPlanState[milestoneId][c.id];
+    if (v !== 'planned' && v !== 'active' && v !== 'empty') {
+      weekPlanState[milestoneId][c.id] = 'empty';
+    }
+  });
+}
+
+function updateWeekPlanChrome() {
+  const dirtyEl = document.getElementById('week-plan-dirty');
+  const saveBtn = document.getElementById('week-plan-save');
+  if (dirtyEl) dirtyEl.style.display = weekPlanDirty ? 'inline' : 'none';
+  if (saveBtn) saveBtn.disabled = !weekPlanDirty;
+}
+
+function saveWeekPlan() {
+  pruneWeekPlanKeys();
+  try {
+    localStorage.setItem(WEEK_PLAN_KEY, JSON.stringify(weekPlanState));
+  } catch (e) {}
+  weekPlanDirty = false;
+  updateWeekPlanChrome();
+  toast('Week plan saved');
+}
+
+function cycleCell(milestoneId, colId) {
+  ensureWeekPlanRow(milestoneId);
+  var cur = weekPlanState[milestoneId][colId] || 'empty';
+  var next = cur === 'empty' ? 'planned' : cur === 'planned' ? 'active' : 'empty';
+  weekPlanState[milestoneId][colId] = next;
+  weekPlanDirty = true;
+  renderWeekPlan();
+}
+
+function renderWeekPlan() {
+  var container = document.getElementById('week-plan-container');
+  if (!container) return;
+  updateWeekPlanChrome();
+  var sorted = rows.slice().sort(sortByPriorityThenId);
+  if (!sorted.length) {
+    container.innerHTML = '<div class="week-plan-empty">Add milestones below to plan by week.</div>';
+    return;
+  }
+  sorted.forEach(function (r) { ensureWeekPlanRow(r.id); });
+  var html = '<div class="week-plan-table-wrap"><table class="week-plan-table"><thead><tr class="wp-cyan-bar">';
+  html += '<th scope="col">Milestone</th>';
+  WEEK_COLS.forEach(function (c) {
+    html += '<th scope="col">' + esc(c.label) + '</th>';
+  });
+  html += '</tr></thead><tbody>';
+  sorted.forEach(function (r) {
+    html += '<tr><td class="wp-milestone" title="' + esc(r.milestone) + '">' + esc(r.milestone) + '</td>';
+    WEEK_COLS.forEach(function (c) {
+      var st = (weekPlanState[r.id] && weekPlanState[r.id][c.id]) || 'empty';
+      var cls = st === 'active' ? 'wp-cell-active' : st === 'planned' ? 'wp-cell-planned' : 'wp-cell-empty';
+      var inner = st === 'active' ? '<span class="wp-play" aria-hidden="true"></span>ACTIVE' : st === 'planned' ? 'PLANNED' : '&nbsp;';
+      html += '<td><button type="button" class="wp-cell-btn ' + cls + '" onclick="cycleCell(\'' + esc(r.id) + '\',\'' + esc(c.id) + '\')">' + inner + '</button></td>';
+    });
+    html += '</tr>';
+  });
+  html += '</tbody></table></div>';
+  container.innerHTML = html;
+}
+
 function persist() {
-  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(bugs)); } catch(e) {}
-  const ts = new Date().toLocaleTimeString([], { hour:'2-digit', minute:'2-digit' });
-  document.getElementById('last-saved').textContent = ts;
+  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(rows)); } catch (e) {}
+  const ts = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+  const el = document.getElementById('last-saved');
+  if (el) el.textContent = ts;
   toast('Changes saved');
 }
 
@@ -362,204 +301,204 @@ function toast(msg) {
   setTimeout(() => el.classList.remove('show'), 1800);
 }
 
-/* ── ID GENERATOR ── */
-function nextId(project) {
-  const prefix = project === 'US' ? 'US' : 'BR';
-  const nums = bugs.filter(b => b.project === project).map(b => parseInt(b.id.split('-')[1]) || 0);
+function nextId() {
+  const nums = rows.map(r => {
+    const m = /^P-(\d+)$/.exec(r.id || '');
+    return m ? parseInt(m[1], 10) : 0;
+  });
   const max = nums.length ? Math.max(...nums) : 0;
-  return `${prefix}-${String(max + 1).padStart(2, '0')}`;
+  return 'P-' + String(max + 1).padStart(2, '0');
 }
 
-/* ── STATS ── */
 function updateStats() {
-  const c = { open:0, 'in-progress':0, resolved:0, blocked:0, investigating:0 };
-  bugs.forEach(b => { if (c[b.status] !== undefined) c[b.status]++; });
-  document.getElementById('st-total').textContent = bugs.length;
-  document.getElementById('st-open').textContent  = c['open'];
-  document.getElementById('st-prog').textContent  = c['in-progress'];
-  document.getElementById('st-res').textContent   = c['resolved'];
-  document.getElementById('st-blk').textContent   = c['blocked'];
+  const c = { 'not-started': 0, 'in-progress': 0, done: 0, 'at-risk': 0 };
+  rows.forEach(r => { if (c[r.status] !== undefined) c[r.status]++; });
+  document.getElementById('st-total').textContent = rows.length;
+  document.getElementById('st-ns').textContent = c['not-started'];
+  document.getElementById('st-ip').textContent = c['in-progress'];
+  document.getElementById('st-done').textContent = c.done;
+  document.getElementById('st-risk').textContent = c['at-risk'];
 }
 
-/* ── FILTERS ── */
 function setFilter(f, btn) {
   currentFilter = f;
-  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.toolbar .filter-btn').forEach(b => b.classList.remove('active'));
   btn.classList.add('active');
   render();
 }
+
 function setSort(v) { currentSort = v; render(); }
 
-/* ── INLINE EDITS ── */
-function todayISO() {
-  return new Date().toISOString().slice(0, 10);
-}
-function changeStatus(sel) {
-  const bug = bugs.find(b => b.id === sel.dataset.id);
-  if (!bug) return;
-  bug.status = sel.value;
-  if (sel.value === 'resolved' && !bug.fixed) bug.fixed = todayISO();
-  bug.updated = new Date().toLocaleTimeString([], { hour:'2-digit', minute:'2-digit' });
-  sel.className = 'status-select s-' + sel.value;
-  const el = document.getElementById('upd-' + bug.id);
-  if (el) el.textContent = 'Updated ' + bug.updated;
-  const fixedInput = document.querySelector(`input.date-input[data-id="${bug.id}"][data-field="fixed"]`);
-  if (fixedInput) fixedInput.value = bug.fixed || '';
-  persist(); updateStats();
-}
-function changeNotes(el) {
-  const bug = bugs.find(b => b.id === el.dataset.id);
-  if (bug) { bug.notes = el.value; persist(); }
-}
-function changeAssignee(el) {
-  const bug = bugs.find(b => b.id === el.dataset.id);
-  if (bug) { bug.assignee = el.value; persist(); }
-}
-function changeDate(el) {
-  const bug = bugs.find(b => b.id === el.dataset.id);
-  if (!bug) return;
-  const field = el.dataset.field;
-  if (field !== 'raised' && field !== 'fixed') return;
-  bug[field] = el.value || '';
+function changePlanStatus(sel) {
+  const row = rows.find(r => r.id === sel.dataset.id);
+  if (!row) return;
+  row.status = sel.value;
+  row.updated = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+  sel.className = 'status-select plan-st-' + sel.value;
+  const tag = document.getElementById('upd-' + row.id);
+  if (tag) tag.textContent = row.updated ? 'Updated ' + row.updated : '—';
   persist();
-}
-function deleteBug(id) {
-  if (!confirm('Delete this issue?')) return;
-  bugs = bugs.filter(b => b.id !== id);
-  persist(); render();
+  updateStats();
 }
 
-/* ── MODAL ── */
+function inlineField(el) {
+  const row = rows.find(r => r.id === el.dataset.id);
+  if (!row) return;
+  const field = el.dataset.field;
+  if (field === 'phase' || field === 'milestone') row[field] = el.value;
+  else if (field === 'notes') row.notes = el.value;
+  persist();
+}
+
+function inlineDate(el) {
+  const row = rows.find(r => r.id === el.dataset.id);
+  if (!row) return;
+  row.targetDate = el.value || '';
+  persist();
+}
+
+function inlinePriority(el) {
+  const row = rows.find(r => r.id === el.dataset.id);
+  if (!row) return;
+  let p = parseInt(el.value, 10);
+  if (!Number.isFinite(p) || p < 1) p = 999;
+  row.priority = p;
+  el.value = p;
+  persist();
+  render();
+}
+
+function deleteRow(id) {
+  if (!confirm('Delete this milestone?')) return;
+  rows = rows.filter(r => r.id !== id);
+  delete weekPlanState[id];
+  persist();
+  render();
+}
+
 function openModal() {
   document.getElementById('modal-overlay').classList.add('open');
-  document.getElementById('f-title').focus();
-  ['f-title','f-project','f-area','f-assignee','f-notes'].forEach(id => {
-    const el = document.getElementById(id);
-    if (el) el.value = '';
-  });
-  document.getElementById('f-priority').value = 'medium';
-  document.getElementById('f-status').value = 'open';
-  document.getElementById('err-title').classList.remove('show');
-  document.getElementById('err-project').classList.remove('show');
+  document.getElementById('f-phase').value = '';
+  document.getElementById('f-milestone').value = '';
+  document.getElementById('f-target').value = '';
+  document.getElementById('f-priority').value = String(nextPrioritySlot());
+  document.getElementById('f-status').value = 'in-progress';
+  document.getElementById('f-notes').value = '';
+  document.getElementById('err-phase').classList.remove('show');
+  document.getElementById('err-milestone').classList.remove('show');
+  document.getElementById('f-phase').focus();
 }
+
 function closeModal() {
   document.getElementById('modal-overlay').classList.remove('open');
 }
+
 function overlayClick(e) {
   if (e.target === document.getElementById('modal-overlay')) closeModal();
 }
 
-function submitIssue() {
-  const title   = document.getElementById('f-title').value.trim();
-  const project = document.getElementById('f-project').value;
-  let valid = true;
+function submitRow() {
+  const phase = document.getElementById('f-phase').value.trim();
+  const milestone = document.getElementById('f-milestone').value.trim();
+  let ok = true;
+  if (!phase) { document.getElementById('err-phase').classList.add('show'); ok = false; }
+  else document.getElementById('err-phase').classList.remove('show');
+  if (!milestone) { document.getElementById('err-milestone').classList.add('show'); ok = false; }
+  else document.getElementById('err-milestone').classList.remove('show');
+  if (!ok) return;
 
-  if (!title) { document.getElementById('err-title').classList.add('show'); valid = false; }
-  else document.getElementById('err-title').classList.remove('show');
-
-  if (!project) { document.getElementById('err-project').classList.add('show'); valid = false; }
-  else document.getElementById('err-project').classList.remove('show');
-
-  if (!valid) return;
-
-  const newBug = {
-    id:       nextId(project),
-    project,
-    title,
-    area:     document.getElementById('f-area').value.trim() || 'General',
-    priority: document.getElementById('f-priority').value,
-    status:   document.getElementById('f-status').value,
-    assignee: document.getElementById('f-assignee').value.trim(),
-    notes:    document.getElementById('f-notes').value.trim(),
-    raised:   todayISO(),
-    fixed:    document.getElementById('f-status').value === 'resolved' ? todayISO() : '',
-    updated:  '',
-  };
-
-  bugs.push(newBug);
-  persist(); render();
-  closeModal();
-  toast('Issue ' + newBug.id + ' created');
-}
-
-/* ── RENDER ── */
-function render() {
-  let list = bugs.filter(b => currentFilter === 'all' || b.project === currentFilter);
-  if (currentSort === 'priority') list = [...list].sort((a,b) => priorityOrder[a.priority] - priorityOrder[b.priority]);
-  if (currentSort === 'status')   list = [...list].sort((a,b) => (statusOrder[a.status]||9) - (statusOrder[b.status]||9));
-
-  const container = document.getElementById('issue-container');
-  if (!list.length) {
-    container.innerHTML = `<div style="text-align:center;padding:48px;color:var(--text3);font-size:13px;">No issues found. <button class="btn-create" style="margin-left:12px;" onclick="openModal()">Create one</button></div>`;
-    updateStats(); return;
+  let priority = nextPrioritySlot();
+  const priRaw = document.getElementById('f-priority').value.trim();
+  if (priRaw) {
+    const p = parseInt(priRaw, 10);
+    if (Number.isFinite(p) && p >= 1) priority = p;
   }
 
-  const grouped = {};
-  list.forEach(b => { if (!grouped[b.project]) grouped[b.project] = []; grouped[b.project].push(b); });
-  const projects = [...new Set(list.map(b => b.project))];
-
-  const statusOpts = [
-    ['open','Open'],['in-progress','In Progress'],
-    ['investigating','Investigating'],['resolved','Resolved'],['blocked','Blocked']
-  ];
-
-  let html = '';
-  projects.forEach(proj => {
-    const items = grouped[proj];
-    const badgeCls = proj === 'US' ? 'badge-us' : 'badge-br';
-    const label = proj === 'US' ? 'US Project' : 'Brazil Project';
-
-    html += `<div class="proj-section">
-      <div class="proj-header">
-        <span class="proj-badge ${badgeCls}">${label}</span>
-        <span class="proj-label">Prod bugs</span>
-        <span class="proj-count">${items.length} issue${items.length>1?'s':''}</span>
-      </div>
-      <table class="issue-table">
-        <thead><tr>
-          <th style="width:68px">ID</th>
-          <th>Title</th>
-          <th style="width:95px">Area</th>
-          <th style="width:78px">Priority</th>
-          <th style="width:132px">Status</th>
-          <th style="width:118px">Raised</th>
-          <th style="width:118px">Fixed</th>
-          <th style="width:108px">Assignee</th>
-          <th style="width:150px">Notes</th>
-          <th style="width:88px">Updated</th>
-          <th style="width:36px"></th>
-        </tr></thead><tbody>`;
-
-    items.forEach(b => {
-      const opts = statusOpts.map(([v,l]) => `<option value="${v}"${v===b.status?' selected':''}>${l}</option>`).join('');
-      html += `<tr>
-        <td class="td-id">${b.id}</td>
-        <td class="td-title">${b.title}</td>
-        <td class="td-area">${b.area}</td>
-        <td><span class="pri pri-${b.priority}">${b.priority}</span></td>
-        <td><select class="status-select s-${b.status}" data-id="${b.id}" onchange="changeStatus(this)">${opts}</select></td>
-        <td><input class="date-input" type="date" data-id="${b.id}" data-field="raised" value="${b.raised || ''}" onchange="changeDate(this)"/></td>
-        <td><input class="date-input" type="date" data-id="${b.id}" data-field="fixed" value="${b.fixed || ''}" onchange="changeDate(this)"/></td>
-        <td><input class="assignee-input" type="text" data-id="${b.id}" value="${b.assignee}" placeholder="Unassigned" onchange="changeAssignee(this)"/></td>
-        <td><textarea class="notes-input" data-id="${b.id}" rows="1" placeholder="Add a note…" onchange="changeNotes(this)">${b.notes}</textarea></td>
-        <td><span class="updated-tag" id="upd-${b.id}">${b.updated?'Updated '+b.updated:'—'}</span></td>
-        <td><button class="btn-del" title="Delete" onclick="deleteBug('${b.id}')">&#x2715;</button></td>
-      </tr>`;
-    });
-    html += `</tbody></table></div>`;
+  const rec = normalizeRow({
+    id: nextId(),
+    phase,
+    milestone,
+    targetDate: document.getElementById('f-target').value || '',
+    status: document.getElementById('f-status').value,
+    priority,
+    notes: document.getElementById('f-notes').value.trim(),
+    updated: '',
   });
-
-  container.innerHTML = html;
-  updateStats();
+  rows.push(rec);
+  persist();
+  render();
+  closeModal();
+  toast('Added ' + rec.id);
 }
 
-/* ── KEYBOARD SHORTCUT ── */
+function render() {
+  let list = rows.filter(r => currentFilter === 'all' || r.status === currentFilter);
+  if (currentSort === 'default') {
+    list = [...list].sort(sortByPriorityThenId);
+  } else if (currentSort === 'status') {
+    list = [...list].sort((a, b) => (planStatusOrder[a.status] ?? 9) - (planStatusOrder[b.status] ?? 9) || sortByPriorityThenId(a, b));
+  } else if (currentSort === 'target') {
+    list = [...list].sort((a, b) => {
+      const ta = a.targetDate || '9999-12-31';
+      const tb = b.targetDate || '9999-12-31';
+      return ta.localeCompare(tb) || sortByPriorityThenId(a, b);
+    });
+  }
+
+  const container = document.getElementById('plan-container');
+  const statusOpts = [
+    ['not-started', 'Not started'],
+    ['in-progress', 'In progress'],
+    ['done', 'Done'],
+    ['at-risk', 'At risk'],
+  ];
+
+  if (!list.length) {
+    container.innerHTML = '<div style="text-align:center;padding:48px;color:var(--text3);font-size:13px;">No milestones match this filter. <button type="button" class="btn-create" style="margin-left:12px;" onclick="openModal()">Add one</button></div>';
+    updateStats();
+    renderWeekPlan();
+    return;
+  }
+
+  let html = '<table class="issue-table"><thead><tr>' +
+    '<th style="width:56px">ID</th>' +
+    '<th style="width:56px">Pri</th>' +
+    '<th style="width:120px">Phase</th>' +
+    '<th>Milestone</th>' +
+    '<th style="width:118px">Target</th>' +
+    '<th style="width:140px">Status</th>' +
+    '<th style="width:min(220px,22vw)">Notes</th>' +
+    '<th style="width:88px">Updated</th>' +
+    '<th style="width:36px"></th>' +
+    '</tr></thead><tbody>';
+
+  list.forEach(r => {
+    const opts = statusOpts.map(([v, l]) => '<option value="' + v + '"' + (v === r.status ? ' selected' : '') + '>' + l + '</option>').join('');
+    html += '<tr>' +
+      '<td class="td-id">' + esc(r.id) + '</td>' +
+      '<td><input class="inline-input" type="number" min="1" step="1" style="max-width:56px" data-id="' + esc(r.id) + '" value="' + esc(String(priorityValue(r))) + '" onchange="inlinePriority(this)"/></td>' +
+      '<td><input class="inline-input" type="text" data-id="' + esc(r.id) + '" data-field="phase" value="' + esc(r.phase) + '" onchange="inlineField(this)"/></td>' +
+      '<td><input class="inline-input" type="text" data-id="' + esc(r.id) + '" data-field="milestone" value="' + esc(r.milestone) + '" onchange="inlineField(this)"/></td>' +
+      '<td><input class="date-input" type="date" data-id="' + esc(r.id) + '" value="' + esc(r.targetDate) + '" onchange="inlineDate(this)"/></td>' +
+      '<td><select class="status-select plan-st-' + r.status + '" data-id="' + esc(r.id) + '" onchange="changePlanStatus(this)">' + opts + '</select></td>' +
+      '<td><textarea class="notes-input" data-id="' + esc(r.id) + '" data-field="notes" rows="1" placeholder="Notes…" onchange="inlineField(this)">' + esc(r.notes) + '</textarea></td>' +
+      '<td><span class="updated-tag" id="upd-' + esc(r.id) + '">' + (r.updated ? 'Updated ' + esc(r.updated) : '—') + '</span></td>' +
+      '<td><button type="button" class="btn-del" title="Delete" onclick="deleteRow(\'' + esc(r.id) + '\')">&#x2715;</button></td>' +
+      '</tr>';
+  });
+  html += '</tbody></table>';
+  container.innerHTML = html;
+  updateStats();
+  renderWeekPlan();
+}
+
 document.addEventListener('keydown', e => {
   if (e.key === 'Escape') closeModal();
   if ((e.metaKey || e.ctrlKey) && e.key === 'k') { e.preventDefault(); openModal(); }
 });
 
 load();
+loadWeekPlan();
 render();
 </script>
 </body>

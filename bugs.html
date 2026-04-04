@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Issues — Global Simulator Platform</title>
+<link rel="stylesheet" href="css/app.css" />
+</head>
+<body>
+
+<div class="topnav">
+  <a class="topnav-logo" href="index.html">
+    <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+      <rect x="3" y="3" width="8" height="8" rx="1.5" fill="white" opacity="0.9"/>
+      <rect x="13" y="3" width="8" height="8" rx="1.5" fill="white" opacity="0.6"/>
+      <rect x="3" y="13" width="8" height="8" rx="1.5" fill="white" opacity="0.6"/>
+      <rect x="13" y="13" width="8" height="8" rx="1.5" fill="white" opacity="0.3"/>
+    </svg>
+    Global Simulator Platform
+  </a>
+  <nav class="topnav-links" aria-label="Main">
+    <a href="index.html" class="nav-link">Plan</a>
+    <a href="resources.html" class="nav-link">Resources</a>
+    <a href="bugs.html" class="nav-link active">Bugs</a>
+  </nav>
+  <div class="topnav-right"><div class="avatar">AR</div></div>
+</div>
+
+<div class="breadcrumb">Global Simulator Platform <span>›</span> Issues (raised &amp; fixed)</div>
+
+<div class="page-header">
+  <div class="page-icon">
+    <svg viewBox="0 0 24 24" fill="white" width="18" height="18" aria-hidden="true"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/></svg>
+  </div>
+  <h1>Issues (raised & fixed)</h1>
+  <div class="header-right">
+    <span>Last saved: <span id="last-saved">—</span></span>
+    <button type="button" class="btn-create" onclick="openModal()">
+      <svg viewBox="0 0 14 14" fill="none" aria-hidden="true"><path d="M7 1v12M1 7h12" stroke="white" stroke-width="2" stroke-linecap="round"/></svg>
+      Create issue
+    </button>
+  </div>
+</div>
+
+<div class="stats-row">
+  <div class="stat-card total"><div class="stat-num" id="st-total">—</div><div class="stat-label">Total</div></div>
+  <div class="stat-card s-open"><div class="stat-num" id="st-open" style="color:#36b37e;">—</div><div class="stat-label">Open</div></div>
+  <div class="stat-card s-progress"><div class="stat-num" id="st-prog" style="color:#0052cc;">—</div><div class="stat-label">In progress</div></div>
+  <div class="stat-card s-resolved"><div class="stat-num" id="st-res" style="color:#6554c0;">—</div><div class="stat-label">Resolved</div></div>
+  <div class="stat-card s-blocked"><div class="stat-num" id="st-blk" style="color:#de350b;">—</div><div class="stat-label">Blocked</div></div>
+</div>
+
+<div class="toolbar">
+  <button type="button" class="filter-btn active" onclick="setFilter('all',this)">All issues</button>
+  <button type="button" class="filter-btn" onclick="setFilter('US',this)">US project</button>
+  <button type="button" class="filter-btn" onclick="setFilter('Brazil',this)">Brazil project</button>
+  <div class="toolbar-right">
+    <select onchange="setSort(this.value)" aria-label="Sort">
+      <option value="default">Sort: default</option>
+      <option value="priority">Sort: priority</option>
+      <option value="status">Sort: status</option>
+    </select>
+  </div>
+</div>
+
+<div class="issue-table-wrap" id="issue-container"></div>
+
+<div class="modal-overlay" id="modal-overlay" onclick="overlayClick(event)">
+  <div class="modal">
+    <div class="modal-header">
+      <h2>Create issue</h2>
+      <button type="button" class="modal-close" onclick="closeModal()">&#x2715;</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-group">
+        <label for="f-title">Title *</label>
+        <input class="form-input" id="f-title" type="text" placeholder="Short description of the bug" />
+        <span class="form-error" id="err-title">Title is required</span>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label for="f-project">Project *</label>
+          <select class="form-select" id="f-project">
+            <option value="">Select project</option>
+            <option value="US">US Project</option>
+            <option value="Brazil">Brazil Project</option>
+          </select>
+          <span class="form-error" id="err-project">Select a project</span>
+        </div>
+        <div class="form-group">
+          <label for="f-area">Area</label>
+          <input class="form-input" id="f-area" type="text" placeholder="e.g. Calculation, RC, Optimization" />
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label for="f-priority">Priority</label>
+          <select class="form-select" id="f-priority">
+            <option value="critical">Critical</option>
+            <option value="high">High</option>
+            <option value="medium" selected>Medium</option>
+            <option value="low">Low</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="f-status">Status</label>
+          <select class="form-select" id="f-status">
+            <option value="open" selected>Open</option>
+            <option value="in-progress">In Progress</option>
+            <option value="investigating">Investigating</option>
+            <option value="blocked">Blocked</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-group">
+        <label for="f-assignee">Assignee</label>
+        <input class="form-input" id="f-assignee" type="text" placeholder="Developer name" />
+      </div>
+      <div class="form-group">
+        <label for="f-notes">Notes</label>
+        <textarea class="form-textarea" id="f-notes" placeholder="Additional context, steps to reproduce, etc."></textarea>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn-cancel" onclick="closeModal()">Cancel</button>
+      <button type="button" class="btn-submit" onclick="submitIssue()">Create issue</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast">Changes saved</div>
+
+<script>
+const STORAGE_KEY = 'bugboard_v2';
+
+const seed = [
+  { id:'US-01', project:'US', title:'Totals are incorrect', priority:'high', status:'open', area:'Calculation', assignee:'', notes:'', raised:'', fixed:'', updated:'' },
+  { id:'US-02', project:'US', title:'Simulate on one tactic is triggering on the other in shared investments', priority:'critical', status:'open', area:'Shared investments', assignee:'', notes:'', raised:'', fixed:'', updated:'' },
+  { id:'US-03', project:'US', title:'One portfolio shows two different sessions — direct & shared investments in one, only shared investments in another', priority:'high', status:'open', area:'Portfolio / Session', assignee:'', notes:'', raised:'', fixed:'', updated:'' },
+  { id:'US-04', project:'US', title:'Influencer tactic partially showing in non-spends even though spends and RCs are built', priority:'medium', status:'open', area:'Media Tactic / RC', assignee:'', notes:'', raised:'', fixed:'', updated:'' },
+  { id:'BR-01', project:'Brazil', title:'Optimization not running — getting scale 0 error; root cause still under investigation', priority:'critical', status:'investigating', area:'Optimization', assignee:'', notes:'', raised:'', fixed:'', updated:'' },
+];
+
+const priorityOrder = { critical:0, high:1, medium:2, low:3 };
+const statusOrder   = { blocked:0, investigating:1, 'in-progress':2, open:3, resolved:4 };
+
+let bugs = [];
+let currentFilter = 'all';
+let currentSort = 'default';
+
+function normalizeBug(b) {
+  const x = { ...b };
+  if (x.raised === undefined || x.raised === null) x.raised = '';
+  if (x.fixed === undefined || x.fixed === null) x.fixed = '';
+  return x;
+}
+function load() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    bugs = raw ? JSON.parse(raw).map(normalizeBug) : seed.map(b => normalizeBug(b));
+  } catch(e) { bugs = seed.map(b => normalizeBug(b)); }
+}
+function persist() {
+  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(bugs)); } catch(e) {}
+  const ts = new Date().toLocaleTimeString([], { hour:'2-digit', minute:'2-digit' });
+  document.getElementById('last-saved').textContent = ts;
+  toast('Changes saved');
+}
+
+function toast(msg) {
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.classList.add('show');
+  setTimeout(() => el.classList.remove('show'), 1800);
+}
+
+function nextId(project) {
+  const prefix = project === 'US' ? 'US' : 'BR';
+  const nums = bugs.filter(b => b.project === project).map(b => parseInt(b.id.split('-')[1]) || 0);
+  const max = nums.length ? Math.max(...nums) : 0;
+  return `${prefix}-${String(max + 1).padStart(2, '0')}`;
+}
+
+function updateStats() {
+  const c = { open:0, 'in-progress':0, resolved:0, blocked:0, investigating:0 };
+  bugs.forEach(b => { if (c[b.status] !== undefined) c[b.status]++; });
+  document.getElementById('st-total').textContent = bugs.length;
+  document.getElementById('st-open').textContent  = c['open'];
+  document.getElementById('st-prog').textContent  = c['in-progress'];
+  document.getElementById('st-res').textContent   = c['resolved'];
+  document.getElementById('st-blk').textContent   = c['blocked'];
+}
+
+function setFilter(f, btn) {
+  currentFilter = f;
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  render();
+}
+function setSort(v) { currentSort = v; render(); }
+
+function todayISO() {
+  return new Date().toISOString().slice(0, 10);
+}
+function changeStatus(sel) {
+  const bug = bugs.find(b => b.id === sel.dataset.id);
+  if (!bug) return;
+  bug.status = sel.value;
+  if (sel.value === 'resolved' && !bug.fixed) bug.fixed = todayISO();
+  bug.updated = new Date().toLocaleTimeString([], { hour:'2-digit', minute:'2-digit' });
+  sel.className = 'status-select s-' + sel.value;
+  const el = document.getElementById('upd-' + bug.id);
+  if (el) el.textContent = 'Updated ' + bug.updated;
+  const fixedInput = document.querySelector(`input.date-input[data-id="${bug.id}"][data-field="fixed"]`);
+  if (fixedInput) fixedInput.value = bug.fixed || '';
+  persist(); updateStats();
+}
+function changeNotes(el) {
+  const bug = bugs.find(b => b.id === el.dataset.id);
+  if (bug) { bug.notes = el.value; persist(); }
+}
+function changeAssignee(el) {
+  const bug = bugs.find(b => b.id === el.dataset.id);
+  if (bug) { bug.assignee = el.value; persist(); }
+}
+function changeDate(el) {
+  const bug = bugs.find(b => b.id === el.dataset.id);
+  if (!bug) return;
+  const field = el.dataset.field;
+  if (field !== 'raised' && field !== 'fixed') return;
+  bug[field] = el.value || '';
+  persist();
+}
+function deleteBug(id) {
+  if (!confirm('Delete this issue?')) return;
+  bugs = bugs.filter(b => b.id !== id);
+  persist(); render();
+}
+
+function openModal() {
+  document.getElementById('modal-overlay').classList.add('open');
+  document.getElementById('f-title').focus();
+  ['f-title','f-project','f-area','f-assignee','f-notes'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.value = '';
+  });
+  document.getElementById('f-priority').value = 'medium';
+  document.getElementById('f-status').value = 'open';
+  document.getElementById('err-title').classList.remove('show');
+  document.getElementById('err-project').classList.remove('show');
+}
+function closeModal() {
+  document.getElementById('modal-overlay').classList.remove('open');
+}
+function overlayClick(e) {
+  if (e.target === document.getElementById('modal-overlay')) closeModal();
+}
+
+function submitIssue() {
+  const title   = document.getElementById('f-title').value.trim();
+  const project = document.getElementById('f-project').value;
+  let valid = true;
+
+  if (!title) { document.getElementById('err-title').classList.add('show'); valid = false; }
+  else document.getElementById('err-title').classList.remove('show');
+
+  if (!project) { document.getElementById('err-project').classList.add('show'); valid = false; }
+  else document.getElementById('err-project').classList.remove('show');
+
+  if (!valid) return;
+
+  const newBug = {
+    id:       nextId(project),
+    project,
+    title,
+    area:     document.getElementById('f-area').value.trim() || 'General',
+    priority: document.getElementById('f-priority').value,
+    status:   document.getElementById('f-status').value,
+    assignee: document.getElementById('f-assignee').value.trim(),
+    notes:    document.getElementById('f-notes').value.trim(),
+    raised:   todayISO(),
+    fixed:    document.getElementById('f-status').value === 'resolved' ? todayISO() : '',
+    updated:  '',
+  };
+
+  bugs.push(newBug);
+  persist(); render();
+  closeModal();
+  toast('Issue ' + newBug.id + ' created');
+}
+
+function render() {
+  let list = bugs.filter(b => currentFilter === 'all' || b.project === currentFilter);
+  if (currentSort === 'priority') list = [...list].sort((a,b) => priorityOrder[a.priority] - priorityOrder[b.priority]);
+  if (currentSort === 'status')   list = [...list].sort((a,b) => (statusOrder[a.status]||9) - (statusOrder[b.status]||9));
+
+  const container = document.getElementById('issue-container');
+  if (!list.length) {
+    container.innerHTML = `<div style="text-align:center;padding:48px;color:var(--text3);font-size:13px;">No issues found. <button type="button" class="btn-create" style="margin-left:12px;" onclick="openModal()">Create one</button></div>`;
+    updateStats(); return;
+  }
+
+  const grouped = {};
+  list.forEach(b => { if (!grouped[b.project]) grouped[b.project] = []; grouped[b.project].push(b); });
+  const projects = [...new Set(list.map(b => b.project))];
+
+  const statusOpts = [
+    ['open','Open'],['in-progress','In Progress'],
+    ['investigating','Investigating'],['resolved','Resolved'],['blocked','Blocked']
+  ];
+
+  let html = '';
+  projects.forEach(proj => {
+    const items = grouped[proj];
+    const badgeCls = proj === 'US' ? 'badge-us' : 'badge-br';
+    const label = proj === 'US' ? 'US Project' : 'Brazil Project';
+
+    html += `<div class="proj-section">
+      <div class="proj-header">
+        <span class="proj-badge ${badgeCls}">${label}</span>
+        <span class="proj-label">Issues (raised & fixed)</span>
+        <span class="proj-count">${items.length} issue${items.length>1?'s':''}</span>
+      </div>
+      <table class="issue-table">
+        <thead><tr>
+          <th style="width:68px">ID</th>
+          <th>Title</th>
+          <th style="width:95px">Area</th>
+          <th style="width:78px">Priority</th>
+          <th style="width:132px">Status</th>
+          <th style="width:118px">Raised</th>
+          <th style="width:118px">Fixed</th>
+          <th style="width:108px">Assignee</th>
+          <th style="width:150px">Notes</th>
+          <th style="width:88px">Updated</th>
+          <th style="width:36px"></th>
+        </tr></thead><tbody>`;
+
+    items.forEach(b => {
+      const opts = statusOpts.map(([v,l]) => `<option value="${v}"${v===b.status?' selected':''}>${l}</option>`).join('');
+      html += `<tr>
+        <td class="td-id">${b.id}</td>
+        <td class="td-title">${b.title}</td>
+        <td class="td-area">${b.area}</td>
+        <td><span class="pri pri-${b.priority}">${b.priority}</span></td>
+        <td><select class="status-select s-${b.status}" data-id="${b.id}" onchange="changeStatus(this)">${opts}</select></td>
+        <td><input class="date-input" type="date" data-id="${b.id}" data-field="raised" value="${b.raised || ''}" onchange="changeDate(this)"/></td>
+        <td><input class="date-input" type="date" data-id="${b.id}" data-field="fixed" value="${b.fixed || ''}" onchange="changeDate(this)"/></td>
+        <td><input class="assignee-input" type="text" data-id="${b.id}" value="${b.assignee}" placeholder="Unassigned" onchange="changeAssignee(this)"/></td>
+        <td><textarea class="notes-input" data-id="${b.id}" rows="1" placeholder="Add a note…" onchange="changeNotes(this)">${b.notes}</textarea></td>
+        <td><span class="updated-tag" id="upd-${b.id}">${b.updated?'Updated '+b.updated:'—'}</span></td>
+        <td><button type="button" class="btn-del" title="Delete" onclick="deleteBug('${b.id}')">&#x2715;</button></td>
+      </tr>`;
+    });
+    html += `</tbody></table></div>`;
+  });
+
+  container.innerHTML = html;
+  updateStats();
+}
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') closeModal();
+  if ((e.metaKey || e.ctrlKey) && e.key === 'k') { e.preventDefault(); openModal(); }
+});
+
+load();
+render();
+</script>
+</body>
+</html>
